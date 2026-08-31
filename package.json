@@ -1,0 +1,34 @@
+{
+  "name": "v-trace",
+  "displayName": "V-Trace",
+  "description": "Rastreabilidade viva entre requisitos e testes, visualizada como V-Model",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Visualization", "Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vtrace.refresh",
+        "title": "V-Trace: Refresh Graph"
+      },
+      {
+        "command": "vtrace.openView",
+        "title": "V-Trace: Open V-Model View"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}
