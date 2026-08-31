@@ -2,7 +2,7 @@
 import * as vscode from 'vscode';
 import { TagMatch } from './types';
 
-const REQ_REGEX = /@req:\s*([\w-]+)(?:\s+"([^"]+)")?/;
+const REQ_REGEX = /@req:\s*([\w-]+)(?:\s*"([^"]+)")?/;
 const TEST_REGEX = /@test-for:\s*([\w-]+)/;
 
 export function parseFile(document: vscode.TextDocument): TagMatch[] {
@@ -11,7 +11,7 @@ export function parseFile(document: vscode.TextDocument): TagMatch[] {
   for (let i = 0; i < document.lineCount; i++) {
     const line = document.lineAt(i).text;
 
-    // skip rápido: só corre regex se a linha tiver hipótese de conter uma tag
+    //optimization madded only checks lines with @
     if (!line.includes('@req') && !line.includes('@test-for')) continue;
 
     const reqMatch = line.match(REQ_REGEX);
