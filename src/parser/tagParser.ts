@@ -1,3 +1,4 @@
+// src/parser/tagParser.ts
 import * as vscode from 'vscode';
 import { TagMatch } from './types';
 
@@ -6,8 +7,12 @@ const TEST_REGEX = /@test-for:\s*([\w-]+)/;
 
 export function parseFile(document: vscode.TextDocument): TagMatch[] {
   const matches: TagMatch[] = [];
+
   for (let i = 0; i < document.lineCount; i++) {
     const line = document.lineAt(i).text;
+
+    // skip rápido: só corre regex se a linha tiver hipótese de conter uma tag
+    if (!line.includes('@req') && !line.includes('@test-for')) continue;
 
     const reqMatch = line.match(REQ_REGEX);
     if (reqMatch) {
@@ -30,6 +35,7 @@ export function parseFile(document: vscode.TextDocument): TagMatch[] {
       });
     }
   }
+
   return matches;
 }
 
@@ -38,10 +44,14 @@ export async function scanWorkspace(): Promise<TagMatch[]> {
     '**/*.{ts,js,py,java,c,cpp}',
     '**/node_modules/**'
   );
-  const all: TagMatch[] = [];
-  for (const uri of files) {
-    const doc = await vscode.workspace.openTextDocument(uri);
-    all.push(...parseFile(doc));
-  }
-  return all;
+
+  // processa todos os ficheiros em paralelo em vez de sequencialmente
+  const results = await Promise.all(
+    files.map(async uri => {
+      const doc = await vscode.workspace.openTextDocument(uri);
+      return parseFile(doc);
+    })
+  );
+
+  return results.flat();
 }
